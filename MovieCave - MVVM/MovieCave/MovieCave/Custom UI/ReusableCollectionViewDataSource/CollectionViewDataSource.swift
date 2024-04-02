@@ -7,6 +7,17 @@
 
 import UIKit
 
+struct CollectionViewDataSourceConstants {
+    static let collectionViewReloadSectionsInteger: Int = 0
+    static let collectionViewItemSpacing: CGFloat = 8
+    static let collectionViewNumberOfItemsPerRow: CGFloat = 2
+    static let collectionViewNumberOfItemsPerRowExtraction: CGFloat = 1
+    static let collectionViewHeighMultiplier: CGFloat = 1.5
+    static let collectionViewMinimumInteritemSpacing: CGFloat = 8
+    static let collectionViewminimumLineSpacing: CGFloat = 8
+    static let scrollViewDidEndDraggingNegative: CGFloat = -1
+}
+
 class CollectionViewDataSource<T>: NSObject, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     //MARK: - Properties
@@ -31,7 +42,7 @@ class CollectionViewDataSource<T>: NSObject, UICollectionViewDataSource, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.MoviesCollectionCellidentifier, for: indexPath) as? CollectionViewReusableCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReusableListViewConstants.MoviesCollectionCellidentifier, for: indexPath) as? CollectionViewReusableCell else {
             return UICollectionViewCell()
         }
         
@@ -49,21 +60,21 @@ class CollectionViewDataSource<T>: NSObject, UICollectionViewDataSource, UIColle
     
     // MARK: - UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = Constants.collectionViewItemSpacing
-        let numberOfItemsPerRow: CGFloat = Constants.collectionViewNumberOfItemsPerRow
-        let totalSpacing: CGFloat = (numberOfItemsPerRow - Constants.collectionViewNumberOfItemsPerRowExtraction) * spacing
+        let spacing: CGFloat = CollectionViewDataSourceConstants.collectionViewItemSpacing
+        let numberOfItemsPerRow: CGFloat = CollectionViewDataSourceConstants.collectionViewNumberOfItemsPerRow
+        let totalSpacing: CGFloat = (numberOfItemsPerRow - CollectionViewDataSourceConstants.collectionViewNumberOfItemsPerRowExtraction) * spacing
         let width = (collectionView.frame.width - totalSpacing) / numberOfItemsPerRow
-        let height = width * Constants.collectionViewHeighMultiplier
+        let height = width * CollectionViewDataSourceConstants.collectionViewHeighMultiplier
         
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return Constants.collectionViewMinimumInteritemSpacing
+        return CollectionViewDataSourceConstants.collectionViewMinimumInteritemSpacing
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return Constants.collectionViewminimumLineSpacing
+        return CollectionViewDataSourceConstants.collectionViewminimumLineSpacing
     }
     
     // MARK: - UIScrollViewDelegate
@@ -74,7 +85,7 @@ class CollectionViewDataSource<T>: NSObject, UICollectionViewDataSource, UIColle
         
         if offsetY > contentHeight - height {
             changePageHandler?()
-        } else if offsetY * Constants.scrollViewDidEndDraggingNegative > offsetY {
+        } else if offsetY * CollectionViewDataSourceConstants.scrollViewDidEndDraggingNegative > offsetY {
             resetToFirstPageHandler?()
         }
     }

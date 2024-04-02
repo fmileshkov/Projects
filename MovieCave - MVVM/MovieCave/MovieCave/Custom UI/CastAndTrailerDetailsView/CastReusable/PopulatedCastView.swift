@@ -21,12 +21,12 @@ class PopulatedCastView: UIStackView, PopulatedCastViewProtocol {
     
     //MARK: - Public Methods
     func setUpCast(with cast: [MediaCast]) {
-        spacing = Constants.castViewSpacing
+        spacing = CastViewConstants.castViewSpacing
         for actor in cast {
             guard let castPoster = actor.poster else { return }
             
             let cast = CastView()
-            cast.configureView(with: Constants.castViewWidhtConstraint, posterKey: castPoster, castName: actor.name)
+            cast.configureView(posterKey: castPoster, castName: actor.name)
             addArrangedSubview(cast)
         }
     }

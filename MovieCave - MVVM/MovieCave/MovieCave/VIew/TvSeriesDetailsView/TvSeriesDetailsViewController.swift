@@ -24,7 +24,6 @@ class TvSeriesDetailsViewController: UIViewController {
     //MARK: - Properties
     var viewModel: TvSeriesDetailsProtocol?
     private var cancellables: [AnyCancellable] = []
-    private var popUp: PopUpView!
     
     //MARK: - LifeCycle
     override func viewDidLoad() {
@@ -32,6 +31,11 @@ class TvSeriesDetailsViewController: UIViewController {
         setUpBinders()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
 }
 
 extension TvSeriesDetailsViewController: TrailerViewDelegate {
@@ -42,11 +46,11 @@ extension TvSeriesDetailsViewController: TrailerViewDelegate {
                   let seriesDetails else { return }
             
             DispatchQueue.main.async {
-                self.bigPosterImageView.downloaded(from: Constants.moviePosterURL + seriesDetails.bigPoster, contentMode: .scaleAspectFill)
+                self.bigPosterImageView.downloaded(from: ReusableListViewConstants.moviePosterURL + seriesDetails.bigPoster, contentMode: .scaleAspectFill)
                 self.starRaitingLabel.text = seriesDetails.avrgVote
                 self.yearLabel.text = seriesDetails.releaseDate
                 self.movieTitleLabel.text = seriesDetails.title
-                self.describtionImageView.downloaded(from: Constants.moviePosterURL + seriesDetails.poster)
+                self.describtionImageView.downloaded(from: ReusableListViewConstants.moviePosterURL + seriesDetails.poster)
                 self.describtionLabel.text = seriesDetails.overview
                 self.setUpGenreLabels(with: seriesDetails.gernes)
             }
@@ -75,8 +79,7 @@ extension TvSeriesDetailsViewController: TrailerViewDelegate {
             guard let self,
                   let message else { return }
             
-            self.popUp = PopUpView(frame: self.view.bounds, inVC: self, messageLabelText: message)
-            self.view.addSubview(self.popUp)
+            self.view.addSubview(PopUpView(frame: self.view.bounds, inVC: self, messageLabelText: message))
         }.store(in: &cancellables)
     }
     

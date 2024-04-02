@@ -8,6 +8,22 @@
 import UIKit
 import Combine
 
+struct ReusableListViewConstants {
+    static let stackViewTrailingAnchorConstraint: CGFloat = -8
+    static let stackViewLeadingAnchorConstraint: CGFloat = 8
+    static let filterButtonTitleLabelFontSize: CGFloat = 16
+    static let filterButtonLayerCornerRadius: CGFloat = 5
+    static let filterButtonHeightAnchorConstraint: CGFloat = 25
+    static let reusableListViewStackViewSpacing: CGFloat = 8
+    static let reusableListViewSearchTextDebounce: Int = 500
+    static let filterButtonsHighLightColor: UIColor = UIColor(red: 0.10, green: 0.25, blue: 0.56, alpha: 0.65)
+    static let searchBarPlaceHolder = "Search"
+    static let MoviesCollectionCellidentifier = "MoviesCollectionViewCell"
+    static let systemIconWidht: CGFloat = 35
+    static let systemIconHeight: CGFloat = 35
+    static let moviePosterURL: String = "https://image.tmdb.org/t/p/w500"
+}
+
 //MARK: - FilterButtonsDelegate
 @objc protocol FilterButtonsDelegate: AnyObject {
     /// Tells the delegate which filter button was clicked.
@@ -101,7 +117,7 @@ class ReusableListView: UIView {
     
     private func loadSearchBarTextFiledPublisher() {
         searchBar.searchTextField.publisher
-            .debounce(for: .milliseconds(Constants.reusableListViewSearchTextDebounce), scheduler: RunLoop.main)
+            .debounce(for: .milliseconds(ReusableListViewConstants.reusableListViewSearchTextDebounce), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] text in
                 
@@ -110,10 +126,8 @@ class ReusableListView: UIView {
     }
     
     private func setUpView() {
-//        guard var stackView else { return }
-        
         searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.placeholder = Constants.searchBarPlaceHolder
+        searchBar.placeholder = ReusableListViewConstants.searchBarPlaceHolder
         searchBar.barStyle = .black
         filterBarView.addSubview(searchBar)
 
@@ -135,13 +149,13 @@ class ReusableListView: UIView {
         stackView?.translatesAutoresizingMaskIntoConstraints = false
         stackView?.axis = .horizontal
         stackView?.alignment = .center
-        stackView?.spacing = Constants.reusableListViewStackViewSpacing
+        stackView?.spacing = ReusableListViewConstants.reusableListViewStackViewSpacing
         scrollView.addSubview(stackView ?? UIStackView())
 
         stackView?.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor,
-                                           constant: Constants.stackViewLeadingAnchorConstraint).isActive = true
+                                           constant: ReusableListViewConstants.stackViewLeadingAnchorConstraint).isActive = true
         stackView?.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor,
-                                            constant: Constants.stackViewTrailingAnchorConstraint).isActive = true
+                                            constant: ReusableListViewConstants.stackViewTrailingAnchorConstraint).isActive = true
         stackView?.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
         stackView?.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         stackView?.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
@@ -158,7 +172,7 @@ class ReusableListView: UIView {
     }
     
     private func highlightButton(_ button: UIButton) {
-        button.backgroundColor = Constants.filterButtonsHighLightColor
+        button.backgroundColor = ReusableListViewConstants.filterButtonsHighLightColor
     }
     
     // MARK: - Action Methods
@@ -167,7 +181,7 @@ class ReusableListView: UIView {
         
         resetButtons(sender)
         
-        if sender.backgroundColor == Constants.filterButtonsHighLightColor {
+        if sender.backgroundColor == ReusableListViewConstants.filterButtonsHighLightColor {
             sender.backgroundColor = .clear
             return
         }
@@ -182,17 +196,15 @@ class ReusableListView: UIView {
 extension ReusableListView: ReusableListViewProtocol {
     
     func filterButtons(buttonTitles: [String]) {
-//        guard let stackView else { return }
-        
         for buttonTitle in buttonTitles {
             let button = UIButton(type: .system)
             button.setTitle(buttonTitle, for: .normal)
             button.backgroundColor = .clear
             button.translatesAutoresizingMaskIntoConstraints = false
-            button.heightAnchor.constraint(equalToConstant: Constants.filterButtonHeightAnchorConstraint).isActive = true
-            button.layer.cornerRadius = Constants.filterButtonLayerCornerRadius
+            button.heightAnchor.constraint(equalToConstant: ReusableListViewConstants.filterButtonHeightAnchorConstraint).isActive = true
+            button.layer.cornerRadius = ReusableListViewConstants.filterButtonLayerCornerRadius
             button.layer.masksToBounds = true
-            button.titleLabel?.font = UIFont.systemFont(ofSize: Constants.filterButtonTitleLabelFontSize)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: ReusableListViewConstants.filterButtonTitleLabelFontSize)
             button.addTarget(self, action: #selector(filterButtonTapped(_:)), for: .touchUpInside)
             stackView?.addArrangedSubview(button)
         }
@@ -207,7 +219,7 @@ extension ReusableListView: ReusableListViewProtocol {
     }
 
     func reloadCollectionViewSections() {
-        collectionView.reloadSections(IndexSet(integer: Constants.collectionViewReloadSectionsInteger))
+        collectionView.reloadSections(IndexSet(integer: CollectionViewDataSourceConstants.collectionViewReloadSectionsInteger))
     }
 
     func reloadCellItems(at idextPath: [IndexPath]) {
@@ -233,6 +245,6 @@ extension ReusableListView: ReusableListViewProtocol {
     func setUpCollectionView(with delegate: UICollectionViewDelegate, with dataSource: UICollectionViewDataSource) {
         collectionView.delegate = delegate
         collectionView.dataSource = dataSource
-        collectionView.register(CollectionViewReusableCell.self, forCellWithReuseIdentifier: Constants.MoviesCollectionCellidentifier)
+        collectionView.register(CollectionViewReusableCell.self, forCellWithReuseIdentifier: ReusableListViewConstants.MoviesCollectionCellidentifier)
     }
 }

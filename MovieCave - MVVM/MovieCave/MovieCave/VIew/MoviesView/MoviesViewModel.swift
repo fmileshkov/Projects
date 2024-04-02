@@ -32,7 +32,7 @@ protocol MoviesViewModelProtocol: FavoriteButtonDelegate {
     var fetchingDataSuccession: CurrentValueSubject<Bool, Never> { get }
     
     /// The coordinator responsible for handling movie view navigation.
-    var moviesViewCoordinatorDelegate: MoviesViewCoordinatorDelegate? { get }
+    var movieCoordinatorDelegate: MoviesCoordinatorDelegate? { get }
     
     /// A subject that holds the pop-up message.
     var popUpMessage: CurrentValueSubject<String?, Never> { get }
@@ -50,7 +50,7 @@ protocol MoviesViewModelProtocol: FavoriteButtonDelegate {
 class MoviesViewModel: MoviesViewModelProtocol {
     
     //MARK: - Properties
-    weak var moviesViewCoordinatorDelegate: MoviesViewCoordinatorDelegate?
+    weak var movieCoordinatorDelegate: MoviesCoordinatorDelegate?
     private let movieDBService: MovieDBServiceProtocol
     private var list: MoviesList
     private var currentPage: Int
@@ -66,13 +66,13 @@ class MoviesViewModel: MoviesViewModelProtocol {
     var favoriteButtonIndex: CurrentValueSubject<Int?, Never> = CurrentValueSubject(nil)
     
     //MARK: - Initializer
-    init(moviesViewCoordinatorDelegate: MoviesViewCoordinatorDelegate,
+    init(movieCoordinatorDelegate: MoviesCoordinatorDelegate,
          movieDBService: MovieDBServiceProtocol,
          dataSource: CollectionViewDataSource<MoviesModel>,
          with list: MoviesList,
          with genreList: MovieGenreLists,
          currentPage: Int) {
-        self.moviesViewCoordinatorDelegate = moviesViewCoordinatorDelegate
+        self.movieCoordinatorDelegate = movieCoordinatorDelegate
         self.movieDBService = movieDBService
         self.currentPage = currentPage
         self.genreList = genreList
@@ -102,24 +102,22 @@ class MoviesViewModel: MoviesViewModelProtocol {
     }
 
     func filterMovies(_ filter: String) {
-        resetToFirstPage()
+        currentOperationType = .fetchMovies
         
         switch filter {
         case Constants.mostPopularFilterButton:
             genreList = .popular
-            fetchMovies(withFilter: .popular, on: currentPage)
         case Constants.upComingFilterButton:
             genreList = .upComing
-            fetchMovies(withFilter: .upComing, on: currentPage)
         case Constants.ratingFilterButton:
             genreList = .topRated
-            fetchMovies(withFilter: .topRated, on: currentPage)
         case Constants.newestFilterButton:
             genreList = .nowPlaying
-            fetchMovies(withFilter: .nowPlaying, on: currentPage)
         default:
             break
         }
+        
+        resetToFirstPage()
     }
 
     func favoriteMovieListOperations(with movieID: Int, for operation: Favorites) {
@@ -127,7 +125,7 @@ class MoviesViewModel: MoviesViewModelProtocol {
     }
     
     func sendMovieDetails(with movieID: Int) {
-        moviesViewCoordinatorDelegate?.loadMoviesDetailsView(with: movieID)
+        movieCoordinatorDelegate?.loadMovieDetailsView(with: movieID)
     }
     
     //MARK: - Private
@@ -199,6 +197,17 @@ class MoviesViewModel: MoviesViewModelProtocol {
     
     private func changePage() {
         currentPage += 1
+        fetchingType()
+    }
+    
+    private func resetToFirstPage() {
+        currentPage = 1
+        moviesArray.removeAll()
+        resetPosition.send(true)
+        fetchingType()
+    }
+    
+    private func fetchingType() {
         switch currentOperationType {
         case .fetchMovies:
             fetchMovies(withFilter: genreList, on: currentPage)
@@ -207,13 +216,6 @@ class MoviesViewModel: MoviesViewModelProtocol {
         default:
             break
         }
-        
-    }
-    
-    private func resetToFirstPage() {
-        currentPage = 1
-        moviesArray.removeAll()
-        resetPosition.send(true)
     }
     
 }

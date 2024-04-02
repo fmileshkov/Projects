@@ -23,13 +23,18 @@ class MoviesViewController: UIViewController, SpinnerProtocol {
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.navigationBar.prefersLargeTitles = false
         movieView.filterButtons(buttonTitles: [Constants.mostPopularFilterButton,
                                                   Constants.upComingFilterButton,
                                                   Constants.ratingFilterButton,
                                                   Constants.newestFilterButton])
         setUpBinders()
         setUpDelegates()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     //MARK: - Private Methods
@@ -55,7 +60,7 @@ class MoviesViewController: UIViewController, SpinnerProtocol {
 
         viewModel?.fetchingDataSuccession.sink { [weak self] success in
             guard let self,
-                  success else { return}
+                  success else { return }
             
             self.removeSpinner()
             DispatchQueue.main.async {
@@ -102,6 +107,7 @@ extension MoviesViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchBarText = searchBar.text else { return }
         
+        self.showSpinner()
         viewModel?.performSearch(with: searchBarText)
     }
 }
@@ -109,6 +115,7 @@ extension MoviesViewController: UISearchBarDelegate {
 //MARK: - SearchBarTextFieldTextPublisherDelegate
 extension MoviesViewController: SearchBarTextFieldTextPublisherDelegate {
     func searchBarTextPublished(text: String) {
+        self.showSpinner()
         viewModel?.performSearch(with: text)
     }
 }

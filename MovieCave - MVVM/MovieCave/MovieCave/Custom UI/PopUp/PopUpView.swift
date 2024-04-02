@@ -7,6 +7,15 @@
 
 import UIKit
 
+struct PopUpViewConstants {
+    static let popUpViewHideAnimationTransform: CGAffineTransform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+    static let popUpViewHideAnimationAlpha: CGFloat = 0.2
+    static let popUpViewHideAnimationDuration: TimeInterval = 0.3
+    static let popUpViewDismissTimeInterval: TimeInterval = 3
+    static let popUpViewFrameY: CGFloat = 0
+    static let popUpViewFrameX: CGFloat = 0
+}
+
 class PopUpView: UIView {
 
     //MARK: - IBOutlets
@@ -23,9 +32,9 @@ class PopUpView: UIView {
     init(frame: CGRect, inVC: UIViewController, messageLabelText: String) {
         super.init(frame: frame)
         guard let view = loadViewFromNib(nibName: Constants.popUpViewNibName) else { return }
-        view.frame = CGRect(x: Constants.popUpViewFrameX, y: Constants.popUpViewFrameY, width: frame.width, height: frame.height)
+        view.frame = CGRect(x: PopUpViewConstants.popUpViewFrameX, y: PopUpViewConstants.popUpViewFrameY, width: frame.width, height: frame.height)
         addSubview(view)
-        autoDismissTimer = Timer.scheduledTimer(withTimeInterval: Constants.popUpViewDismissTimeInterval, repeats: false, block: { [weak self] _ in
+        autoDismissTimer = Timer.scheduledTimer(withTimeInterval: PopUpViewConstants.popUpViewDismissTimeInterval, repeats: false, block: { [weak self] _ in
           self?.hide()
         })
         messageLabel.text = messageLabelText
@@ -33,9 +42,9 @@ class PopUpView: UIView {
     
     //MARK: - Methods
     private func hide() {
-        UIView.animate(withDuration: Constants.popUpViewHideAnimationDuration, animations: {
-            self.alpha = Constants.popUpViewHideAnimationAlpha
-            self.transform = Constants.popUpViewHideAnimationTransform
+        UIView.animate(withDuration: PopUpViewConstants.popUpViewHideAnimationDuration, animations: {
+            self.alpha = PopUpViewConstants.popUpViewHideAnimationAlpha
+            self.transform = PopUpViewConstants.popUpViewHideAnimationTransform
         }) { _ in
             self.removeFromSuperview()
         }

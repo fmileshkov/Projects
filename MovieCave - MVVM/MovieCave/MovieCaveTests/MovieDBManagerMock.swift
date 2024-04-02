@@ -14,7 +14,7 @@ enum MockMovieDBManagerType {
 }
 
 class MovieDBManagerMock: MovieDBServiceProtocol {
-    
+
     var succesCase: MockMovieDBManagerType
     var operateWithAPIType: MediaType?
     var moviesList: MoviesList
@@ -76,6 +76,7 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
              return
         }
 
+        var movies: [MoviesData] = []
         let results = [MovieResults(id: 10,
                                     originalTitle: key,
                                     overview: "COLD",
@@ -83,7 +84,7 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                                     posterPath: "POSTER")]
         
         
-        let movies = MoviesData(page: page, results: results)
+        movies.append(MoviesData(page: page, totalPages: 100, results: results))
         
         switch succesCase {
         case .sad:
@@ -95,7 +96,7 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
             switch key {
             case "\(10)":
                 operateWithAPIKey = key
-                createMovieArray(moviesFromApi: movies.results) { [weak self] model in
+                createMovieArray(moviesFromApi: movies) { [weak self] model in
                     self?.apiCallMoviesResult = model.last
                 }
                 
@@ -133,34 +134,34 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                 
             case "popular":
                 operateWithAPIKey = "Most popular"
-                createMovieArray(moviesFromApi: movies.results) { [weak self] model in
+                createMovieArray(moviesFromApi: movies) { [weak self] model in
                     self?.apiCallMoviesResult = model.last
                 }
-                completion(.success(movies as! R))
+                completion(.success(movies.last as! R))
             case "upcoming":
                 operateWithAPIKey = "Upcoming"
-                createMovieArray(moviesFromApi: movies.results) { [weak self] model in
+                createMovieArray(moviesFromApi: movies) { [weak self] model in
                     self?.apiCallMoviesResult = model.last
                 }
-                completion(.success(movies as! R))
+                completion(.success(movies.last as! R))
             case "top_rated":
                 operateWithAPIKey = "Top rated"
-                createMovieArray(moviesFromApi: movies.results) { [weak self] model in
+                createMovieArray(moviesFromApi: movies) { [weak self] model in
                     self?.apiCallMoviesResult = model.last
                 }
-                completion(.success(movies as! R))
+                completion(.success(movies.last as! R))
             case "now_playing":
                 operateWithAPIKey = "Newest"
-                createMovieArray(moviesFromApi: movies.results) { [weak self] model in
+                createMovieArray(moviesFromApi: movies) { [weak self] model in
                     self?.apiCallMoviesResult = model.last
                 }
-                completion(.success(movies as! R))
+                completion(.success(movies.last as! R))
             default:
                 operateWithAPIKey = key
-                createMovieArray(moviesFromApi: movies.results) { [weak self] model in
+                createMovieArray(moviesFromApi: movies) { [weak self] model in
                     self?.apiCallMoviesResult = model.last
                 }
-                completion(.success(movies as! R))
+                completion(.success(movies.last as! R))
             }
         }
     }
@@ -176,7 +177,7 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                                       name: key,
                                       overview: "HOT",
                                        genreIds: [1])]
-        let data = TVSeriesData(page: page, results: results)
+        let data = TVSeriesData(page: page, totalPages: 100, results: results)
         
         switch succesCase {
         case .sad:
@@ -238,8 +239,8 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
         }
     }
     
-    func movieArrayCreation(operationType: MovieCave.APIOperations, with key: String, for list: MovieCave.MoviesList, page: Int, completion: @escaping (Result<[MovieCave.MoviesModel], MovieCave.MovieDBErrors>) -> Void) {
-        var model = [MoviesModel]()
+    
+    func movieArrayCreation(operationType: MovieCave.APIOperations, with key: String, for list: MovieCave.MoviesList, page: Int, completion: @escaping (Result<MovieCave.MoviesModel, MovieCave.MovieDBErrors>) -> Void) {
         
         operateWithAPI(type: .movies, key: key, page: page, operationType: operationType, httpMethod: .get) { [weak self] (result: Result<MoviesData, MovieDBErrors>) in
             
@@ -247,11 +248,15 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
             case .success(let movies):
                 switch list {
                 case .allMovies:
-                    model.append(MoviesModel(movieResults: movies.results[0], isFavorite: false))
-                    completion(.success(model))
+                    completion(.success(
+                        MoviesModel(page: movies.page,
+                                    totalPages: movies.totalPages,
+                                    modelResults: [MovieModelResults(movieResults: movies.results[0], isFavorite: false)])))
                 case .favorites:
-                    model.append(MoviesModel(movieResults: movies.results[0], isFavorite: true))
-                    completion(.success(model))
+                    completion(.success(
+                        MoviesModel(page: movies.page,
+                                    totalPages: movies.totalPages,
+                                    modelResults: [MovieModelResults(movieResults: movies.results[0], isFavorite: true)])))
                 }
                                
             case .failure(let error):
@@ -260,15 +265,13 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
         }
     }
     
-    func tvSeriesArrayCreation(with key: String, on page: Int, operationType: MovieCave.APIOperations, completion: @escaping (Result<[MovieCave.TVSeriesResults], MovieCave.MovieDBErrors>) -> Void) {
-        var model = [TVSeriesResults]()
+    func tvSeriesArrayCreation(with key: String, on page: Int, operationType: MovieCave.APIOperations, completion: @escaping (Result<MovieCave.TVSeriesData, MovieCave.MovieDBErrors>) -> Void) {
         
         operateWithAPI(type: .tvSeries, key: key, page: page, operationType: operationType, httpMethod: .get) { [weak self] (result: Result<TVSeriesData, MovieDBErrors>) in
             
             switch result {
             case .success(let series):
-                model.append(contentsOf: series.results)
-                completion(.success(model))
+                completion(.success(TVSeriesData(page: series.page, totalPages: series.totalPages, results: series.results)))
             case .failure(let error):
                 guard self?.succesCase == .sad else { return }
                 
@@ -276,51 +279,49 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
             }
         }
     }
-    
-    func createMovieArray(moviesFromApi: [MovieResults], completion: @escaping ([MoviesModel]) -> Void) {
+
+    func createMovieArray(moviesFromApi: [MoviesData], completion: @escaping ([MoviesModel]) -> Void) {
         var movieWrappers = [MoviesModel]()
-        
+
         switch moviesList {
         case .allMovies:
             moviesFromApi.forEach { result in
-                let movie = MoviesModel(movieResults: result, isFavorite: false)
+                let movie = MoviesModel(page: result.page,
+                                        totalPages: result.totalPages,
+                                        modelResults: [MovieModelResults(movieResults: result.results[0], isFavorite: false)])
                 movieWrappers.append(movie)
             }
             completion(movieWrappers)
         case .favorites:
             fetchFavoriteMovies(moviesFromApi: moviesFromApi) { completion($0) }
         }
-        
     }
     
-    func fetchFavoriteMovies(moviesFromApi: [MovieResults], completion: @escaping ([MoviesModel]) -> Void) {
+    func fetchFavoriteMovies(moviesFromApi: [MoviesData], completion: @escaping ([MoviesModel]) -> Void) {
         var favoriteMovies = [MoviesModel]()
         
         moviesFromApi.forEach { results in
-            var favoriteMovie = MoviesModel(movieResults: results, isFavorite: false)
-            favoriteMovie.isFavorite = true
+            let favoriteMovie = MoviesModel(page: results.page, totalPages: results.totalPages,
+                                            modelResults: [MovieModelResults(movieResults: results.results[0], isFavorite: true)])
             favoriteMovies.append(favoriteMovie)
         }
         completion(favoriteMovies)
     }
 
     func manageFavoritesMovies(with movieID: Int, for operation: Favorites) {
-        let results = [MovieResults(id: 10,
-                                     originalTitle: "key",
-                                     overview: "COLD",
-                                     genreIds: [1])]
-        
         switch succesCase {
         case .happy:
-            guard let movie = results.first(where: { $0.id == movieID }) else { return }
+            guard let movie = apiCallMoviesResult?.modelResults.first(where: { $0.movieResults.id == movieID }) else { return }
     
             let movieModel: MoviesModel?
             
             switch operation {
             case .removeFromFavorites:
-                movieModel = MoviesModel(movieResults: movie, isFavorite: true)
+                movieModel = MoviesModel(page: 1, totalPages: 15, modelResults:
+                                            [MovieModelResults(movieResults: movie.movieResults, isFavorite: false)])
             case .addToFavorites:
-                movieModel = MoviesModel(movieResults: movie, isFavorite: true)
+                movieModel = MoviesModel(page: 1, totalPages: 15, modelResults:
+                                            [MovieModelResults(movieResults: movie.movieResults, isFavorite: true)])
             }
             
             apiCallMoviesResult = movieModel

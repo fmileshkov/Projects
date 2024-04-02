@@ -38,7 +38,7 @@ protocol TVSeriesViewModelProtocol {
 class TVSeriesViewModel: TVSeriesViewModelProtocol {
     
     //MARK: - Properties
-    private weak var tvSeriesViewCoordinatorDelegate: TVSeriesViewCoordinatorDelegate?
+    private weak var tvSeriesViewCoordinatorDelegate: TVSeriesCoordinatorDelegate?
     private let movieDBService: MovieDBServiceProtocol
     private var currentPage: Int
     private var list: TVSeriesLists
@@ -51,7 +51,7 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     let dataSource = CollectionViewDataSource<TVSeriesResults>(items: [])
     
     //MARK: - Initializer
-    init(tvSeriesViewCoordinatorDelegate: TVSeriesViewCoordinatorDelegate, movieDBService: MovieDBServiceProtocol, currentPage: Int, list: TVSeriesLists) {
+    init(tvSeriesViewCoordinatorDelegate: TVSeriesCoordinatorDelegate, movieDBService: MovieDBServiceProtocol, currentPage: Int, list: TVSeriesLists) {
         self.tvSeriesViewCoordinatorDelegate = tvSeriesViewCoordinatorDelegate
         self.movieDBService = movieDBService
         self.currentPage = currentPage
@@ -76,24 +76,22 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     }
     
     func filterSeries(_ filter: String) {
-        resetToFirstPage()
+        currentOperationType = .fetchSeries
         
         switch filter {
         case Constants.popularTVSeriesFilterButton:
             list = .popular
-            fetchSeries(withFilter: .popular, on: currentPage)
         case Constants.airingTodayTVSeriesFilterButton:
             list = .airingToday
-            fetchSeries(withFilter: .airingToday, on: currentPage)
         case Constants.topRatedTVSeriesFilterButton:
             list = .topRated
-            fetchSeries(withFilter: .topRated, on: currentPage)
         case Constants.onTheAirTVSeriesFilterButton:
             list = .onTheAir
-            fetchSeries(withFilter: .onTheAir, on: currentPage)
         default:
             break
         }
+        
+        resetToFirstPage()
     }
 
     func sendSeriesDetails(with seriesID: Int) {
@@ -142,6 +140,17 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     
     private func changePage() {
         currentPage += 1
+        fetchingType()
+    }
+
+    private func resetToFirstPage() {
+        currentPage = 1
+        seriesArray.removeAll()
+        resetPosition.send(true)
+        fetchingType()
+    }
+    
+    private func fetchingType() {
         switch currentOperationType {
         case .fetchSeries:
             fetchSeries(withFilter: list, on: currentPage)
@@ -151,13 +160,6 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
             break
         }
     }
-
-    private func resetToFirstPage() {
-        currentPage = 1
-        seriesArray.removeAll()
-        resetPosition.send(true)
-    }
-    
     
     private func setUpData() {
         dataSource.configureCell = { [weak self] cell, indexPath, items in

@@ -105,10 +105,10 @@ class MovieDBService: MovieDBServiceProtocol {
     
     //MARK: - Movies
     func movieArrayCreation(operationType: APIOperations,with key: String, for list: MoviesList, page: Int, completion: @escaping (Result<MoviesModel, MovieDBErrors>) -> Void) {
-        
+
         operateWithAPI(type: .movies, key: key, page: page, operationType: operationType, httpMethod: .get) { [weak self] (result: Result<MoviesData, MovieDBErrors>) in
             guard let self else { return }
-            
+
             switch result {
             case .success(let movies):
                 self.fetchFavoriteMovies { favorites in
@@ -116,7 +116,7 @@ class MovieDBService: MovieDBServiceProtocol {
                     case .allMovies:
                         completion(.success(self.createMovieWrappers(movies: movies, favorites: favorites)))
                     case .favorites:
-                        completion(.success(self.createMovieWrappers(movies: movies, favorites: favorites)))
+                        completion(.success(self.createMovieWrappers(movies: movies, favorites: favorites, onlyFavorites: true)))
                     }
                 }
             case .failure(let error):
@@ -131,18 +131,23 @@ class MovieDBService: MovieDBServiceProtocol {
         }
     }
     
-    private func createMovieWrappers(movies: MoviesData, favorites: FavoriteList) -> MoviesModel {
-        var model: MoviesModel?
+    private func createMovieWrappers(movies: MoviesData, favorites: FavoriteList, onlyFavorites: Bool = false) -> MoviesModel {
         var modelResults: [MovieModelResults] = []
-        
-        movies.results.forEach { results in
-            
-            let isFavorite = favorites.items.contains { $0.id == results.id }
-            modelResults.append(MovieModelResults(movieResults: results, isFavorite: isFavorite))
-            model = MoviesModel(page: movies.page, totalPages: movies.totalPages, modelResults: modelResults)
+
+        if onlyFavorites {
+            movies.results.forEach { movie in
+                guard favorites.items.contains(where: { $0.id == movie.id }) else { return }
+                
+                modelResults.append(MovieModelResults(movieResults: movie, isFavorite: true))
+            }
+        } else {
+            movies.results.forEach { movie in
+                let isFavorite = favorites.items.contains { $0.id == movie.id }
+                modelResults.append(MovieModelResults(movieResults: movie, isFavorite: isFavorite))
+            }
         }
         
-        return model ?? MoviesModel(page: movies.page, totalPages: movies.totalPages, modelResults: modelResults)
+        return MoviesModel(page: movies.page, totalPages: movies.totalPages, modelResults: modelResults)
     }
     
     private func isMovieFavorite(completion: @escaping (FavoriteList) -> Void) {

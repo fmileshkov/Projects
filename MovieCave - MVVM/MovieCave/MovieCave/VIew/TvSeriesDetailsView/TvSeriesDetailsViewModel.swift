@@ -23,12 +23,12 @@ class TvSeriesDetailsViewModel: TvSeriesDetailsProtocol {
     var mediaCast: CurrentValueSubject<[MediaCast]?, Never> = CurrentValueSubject(nil)
     var mediaDetails: CurrentValueSubject<MediaDetails?, Never> = CurrentValueSubject(nil)
     var popUpMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
-    weak var tvSeriesDetailsCoordinatorDelegate: TVSeriesDetailsCoordinator?
+    weak var tvSeriesCoordinatorDelegate: TVSeriesCoordinatorDelegate?
     private var apiService: MovieDBServiceProtocol
     
     //MARK: - Initializer
-    init(mediaID: Int, tvSeriesDetailsCoordinatorDelegate: TVSeriesDetailsCoordinator, apiService: MovieDBServiceProtocol, with type: MediaType) {
-        self.tvSeriesDetailsCoordinatorDelegate = tvSeriesDetailsCoordinatorDelegate
+    init(mediaID: Int, tvSeriesCoordinatorDelegate: TVSeriesCoordinatorDelegate, apiService: MovieDBServiceProtocol, with type: MediaType) {
+        self.tvSeriesCoordinatorDelegate = tvSeriesCoordinatorDelegate
         self.apiService = apiService
         tvSeriesDetails(mediaId: mediaID, with: type)
     }
@@ -97,4 +97,5 @@ class TvSeriesDetailsViewModel: TvSeriesDetailsProtocol {
             }
         }
     }
+    
 }

@@ -11,7 +11,7 @@ import XCTest
 final class TvSeriesDetailsViewModelTests: XCTestCase {
     
     var mockMovieDBService: MovieDBManagerMock!
-    var tvSeriesDetailsCoordinatorDelegate: TVSeriesDetailsCoordinator!
+    var tvSeriesCoordinatorDelegate: TVSeriesCoordinator!
     var viewModel: TvSeriesDetailsViewModel!
     let navController = UINavigationController()
     
@@ -23,15 +23,15 @@ final class TvSeriesDetailsViewModelTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
         mockMovieDBService = nil
-        tvSeriesDetailsCoordinatorDelegate = nil
+        tvSeriesCoordinatorDelegate = nil
         viewModel = nil
     }
     
     func test_DetailsView_withTVSeries_HappyCase() {
         // Given
         let id = 10
-        tvSeriesDetailsCoordinatorDelegate = TVSeriesDetailsCoordinator(navController: navController, seriesID: id)
-        viewModel = TvSeriesDetailsViewModel(mediaID: id, tvSeriesDetailsCoordinatorDelegate: tvSeriesDetailsCoordinatorDelegate, apiService: mockMovieDBService, with: .tvSeries)
+        tvSeriesCoordinatorDelegate = TVSeriesCoordinator(navController: navController)
+        viewModel = TvSeriesDetailsViewModel(mediaID: id, tvSeriesCoordinatorDelegate: tvSeriesCoordinatorDelegate, apiService: mockMovieDBService, with: .tvSeries)
         
         // When
         
@@ -50,9 +50,9 @@ final class TvSeriesDetailsViewModelTests: XCTestCase {
     func test_DetailsView_withTVSeries_SadCase() {
         // Given
         let id = 10
-        tvSeriesDetailsCoordinatorDelegate = TVSeriesDetailsCoordinator(navController: navController, seriesID: id)
+        tvSeriesCoordinatorDelegate = TVSeriesCoordinator(navController: navController)
         mockMovieDBService.succesCase = .sad
-        viewModel = TvSeriesDetailsViewModel(mediaID: id, tvSeriesDetailsCoordinatorDelegate: tvSeriesDetailsCoordinatorDelegate, apiService: mockMovieDBService, with: .tvSeries)
+        viewModel = TvSeriesDetailsViewModel(mediaID: id, tvSeriesCoordinatorDelegate: tvSeriesCoordinatorDelegate, apiService: mockMovieDBService, with: .tvSeries)
         
         // When
         

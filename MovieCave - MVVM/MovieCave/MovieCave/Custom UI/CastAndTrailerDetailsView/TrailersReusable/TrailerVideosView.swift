@@ -22,21 +22,13 @@ class TrailerVideosView: UIStackView, TrailerVideosViewProtocol {
     
     //MARK: - Public Methods
     func setUpTrailers(with trailers: [MediaVideos], trailerViewDelegate: TrailerViewDelegate) {
-        spacing = Constants.trailerVideosViewSpacing
+        spacing = TrailerViewConstants.trailerVideosViewSpacing
         for video in trailers {
             let trailerView = TrailerView()
-            trailerView.configureView(videoKey: video.key, labelText: video.name, widthAnchorConst: Constants.trailerViewWidthAnchorConst)
+            trailerView.configureView(videoKey: video.key, labelText: video.name)
             trailerView.delegate = trailerViewDelegate
             addArrangedSubview(trailerView)
         }
     }
     
-    //MARK: - Private
-    private func removeAllTrailers() {
-        for genreLabel in trailerViews {
-            genreLabel.removeFromSuperview()
-        }
-        
-        trailerViews.removeAll()
-    }
 }

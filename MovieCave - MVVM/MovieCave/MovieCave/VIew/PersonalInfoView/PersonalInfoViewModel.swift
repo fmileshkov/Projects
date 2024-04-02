@@ -39,7 +39,7 @@ class PersonalInfoViewModel: PersonalInfoViewModelProtocol {
     }
     
     func removeCoordinator() {
-        personalInfoViewCoordinatorDelegate?.dellocateCoordinator()
+        personalInfoViewCoordinatorDelegate?.deallocateCoordinator()
     }
     
 }

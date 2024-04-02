@@ -32,12 +32,19 @@ class LoginCoordinator: Coordinator, LoginCoordinatorDelegate {
         logInVC.viewModel = LoginViewModel(logInCoordinatorDelegate: self, apiService: MovieDBService())
         navController.pushViewController(logInVC, animated: true)
     }
-    
+
     //MARK: - LoginCoordinatorDelegate
     func goToTabBarController() {
-        let tabBarCoordinator = TabBarCoordinator(rootNavController: navController)
-        parentCoordinator?.addChildCoordinator(tabBarCoordinator)
-        tabBarCoordinator.start()
+        captureAppCoordinator().navigateToTabBarCoordinator()
+    }
+
+    //MARK: - Private
+    private func captureAppCoordinator() -> AppCoordinator {
+        guard let appCoordinator = firstParent(of: AppCoordinator.self) else {
+            return AppCoordinator(rootNavController: navController)
+        }
+        
+        return appCoordinator
     }
     
 }

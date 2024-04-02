@@ -23,7 +23,6 @@ class MoviesDetailsViewController: UIViewController {
     //MARK: - Properties
     var viewModel: MediaDetailsScreenViewModelProtocol?
     private var cancellables: [AnyCancellable] = []
-    private var popUp: PopUpView!
 
     //MARK: - LifeCycle
     override func viewDidLoad() {
@@ -31,6 +30,10 @@ class MoviesDetailsViewController: UIViewController {
         setUpBinders()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
 }
 
 //MARK: - View Elements setUp
@@ -42,11 +45,11 @@ extension MoviesDetailsViewController: TrailerViewDelegate {
                   let movieDetails else { return }
             
             DispatchQueue.main.async {
-                self.bigPosterImageView.downloaded(from: Constants.moviePosterURL + movieDetails.bigPoster, contentMode: .scaleAspectFill)
+                self.bigPosterImageView.downloaded(from: ReusableListViewConstants.moviePosterURL + movieDetails.bigPoster, contentMode: .scaleAspectFill)
                 self.favoritesStarLabel.text = movieDetails.avrgVote
                 self.movieYearLabel.text = movieDetails.releaseDate
                 self.movieTitleLabel.text = movieDetails.title
-                self.describtionImage.downloaded(from: Constants.moviePosterURL + movieDetails.poster)
+                self.describtionImage.downloaded(from: ReusableListViewConstants.moviePosterURL + movieDetails.poster)
                 self.describtionLabel.text = movieDetails.overview
                 self.setUpGenreLabels(with: movieDetails.gernes)
             }
@@ -74,8 +77,7 @@ extension MoviesDetailsViewController: TrailerViewDelegate {
             guard let self,
                   let message else { return }
             
-            self.popUp = PopUpView(frame: self.view.bounds, inVC: self, messageLabelText: message)
-            self.view.addSubview(self.popUp)
+            self.view.addSubview(PopUpView(frame: self.view.bounds, inVC: self, messageLabelText: message))
         }.store(in: &cancellables)
 
     }

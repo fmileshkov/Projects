@@ -34,9 +34,6 @@ class TabBarCoordinator: Coordinator, TabBarCoordinatorDelegate {
 
         prepareTabBarController(withTabControllers: controllers)
         identifier = Constants.tabBarCoordinatorID
-        parentCoordinator?.childCoordinators.removeAll {
-            $0.identifier == Constants.loginCoordinatorID
-        }
     }
     
     private func prepareTabBarController(withTabControllers tabControllers: [UIViewController]) {
@@ -57,22 +54,22 @@ class TabBarCoordinator: Coordinator, TabBarCoordinatorDelegate {
 
             switch page {
             case .movies:
-                let moviesCoordinator = MoviesViewCoordinator(navController: navController, with: .allMovies)
-                parentCoordinator?.addChildCoordinator(moviesCoordinator)
+                let moviesCoordinator = MoviesCoordinator(navController: navController, with: .allMovies)
+                addChildCoordinator(moviesCoordinator)
                 moviesCoordinator.start()
             case .tvSeries:
-                let addMovieCoordinator = TVSeriesViewCoordinator(navController: navController)
-                parentCoordinator?.addChildCoordinator(addMovieCoordinator)
+                let addMovieCoordinator = TVSeriesCoordinator(navController: navController)
+                addChildCoordinator(addMovieCoordinator)
                 addMovieCoordinator.start()
             case .profile:
                 let profileCoordinator = ProfileViewCoordinator(navController: navController)
-                parentCoordinator?.addChildCoordinator(profileCoordinator)
+                addChildCoordinator(profileCoordinator)
                 profileCoordinator.start()
             }
 
             return navController
         }
-    
+
     //MARK: - TabBarCoordinatorDelegate
     func tabBarItemClicked(itemName: String) {
         guard let tabBar: TabBarPage = pages.first(where: {$0.pageTitleValue() == itemName}) else { return }

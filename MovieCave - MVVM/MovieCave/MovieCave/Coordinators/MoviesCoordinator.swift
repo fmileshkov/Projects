@@ -7,22 +7,23 @@
 
 import UIKit
 
-protocol MoviesViewCoordinatorDelegate: AnyObject {
+protocol MoviesCoordinatorDelegate: AnyObject {
     
     /// Loads the MovieDetailsView and ViewModel to display additional
     /// information for a selected movie.
     /// - Parameter ID: The ID of the selected movie to load details for.
-    func loadMoviesDetailsView(with movieID: Int)
+    func loadMovieDetailsView(with movieID: Int)
     
     /// Removes the coordinator from coordinator  hierarchy.
-    func dellocateCoordinator()
+    func deallocateCoordinator()
 }
 
-class MoviesViewCoordinator: Coordinator, MoviesViewCoordinatorDelegate {
+class MoviesCoordinator: Coordinator, MoviesCoordinatorDelegate {
     
     //MARK: - Properties
     private var navController: UINavigationController
     private var list: MoviesList
+    var navigation = UINavigationController()
     
     //MARK: - Initialization
     init(navController: UINavigationController, with list: MoviesList) {
@@ -34,25 +35,28 @@ class MoviesViewCoordinator: Coordinator, MoviesViewCoordinatorDelegate {
     override func start() {
         guard let moviesVC = MoviesViewController.initFromStoryBoard() else { return }
 
-        moviesVC.viewModel = MoviesViewModel(moviesViewCoordinatorDelegate: self,
+        moviesVC.viewModel = MoviesViewModel(movieCoordinatorDelegate: self,
                                              movieDBService: MovieDBService(),
                                              dataSource: CollectionViewDataSource(items: []),
                                              with: list,
                                              with: .topRated,
                                              currentPage: Constants.firstPage)
         identifier = Constants.moviesViewCoordinatorID
-        navController.navigationBar.prefersLargeTitles = false
         navController.pushViewController(moviesVC, animated: true)
     }
     
     //MARK: - MoviesViewCoordinatorDelegate
-    func loadMoviesDetailsView(with movieID: Int) {
-        let moviesCoordinator = MovieDetailsViewCoordinator(navController: navController, movieID: movieID)
-        parentCoordinator?.addChildCoordinator(moviesCoordinator)
-        moviesCoordinator.start()
+    func loadMovieDetailsView(with movieID: Int) {
+        guard let movieDetailsVC = MoviesDetailsViewController.initFromStoryBoard() else { return }
+
+        movieDetailsVC.viewModel = MoviesDetailsViewModel(mediaID: movieID,
+                                                          movieDetailsViewCoordinatorDelegate: self,
+                                                          apiService: MovieDBService(),
+                                                          with: .movies)
+        navController.pushViewController(movieDetailsVC, animated: true)
     }
     
-    func dellocateCoordinator() {
-        parentCoordinator?.removeChildCoordinator(self)
+    func deallocateCoordinator() {
+        removeChildCoordinator(self)
     }
 }

@@ -40,19 +40,19 @@ class ProfileViewCoordinator: Coordinator, ProfileViewCoordinatorDelegate {
     
     //MARK: - ProfileViewCoordinatorDelegate
     func loadFavoriteMoviesView() {
-        let favoriteMoviesCoordinator = MoviesViewCoordinator(navController: navController, with: .favorites)
-        parentCoordinator?.addChildCoordinator(favoriteMoviesCoordinator)
+        let favoriteMoviesCoordinator = MoviesCoordinator(navController: navController, with: .favorites)
+        addChildCoordinator(favoriteMoviesCoordinator)
         favoriteMoviesCoordinator.start()
     }
     
     func loadPersonalInfoView() {
         let personalInfoCoordinator = PersonalInfoViewCoordinator(navController: navController)
-        parentCoordinator?.addChildCoordinator(personalInfoCoordinator)
+        addChildCoordinator(personalInfoCoordinator)
         personalInfoCoordinator.start()
     }
     
     func logOut() {
-        guard let parent = firstParent(of: RootCoordinator.self) else { return }
+        guard let parent = firstParent(of: AppCoordinator.self) else { return }
 
         parent.loadLogInPage()
     }

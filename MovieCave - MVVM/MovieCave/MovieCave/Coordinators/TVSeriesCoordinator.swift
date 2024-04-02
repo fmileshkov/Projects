@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol TVSeriesViewCoordinatorDelegate: AnyObject {
+protocol TVSeriesCoordinatorDelegate: AnyObject {
     
     /// Loads the TVSeriesDetailsView and ViewModel to display additional
     /// information for a selected TV series.
@@ -15,7 +15,7 @@ protocol TVSeriesViewCoordinatorDelegate: AnyObject {
     func loadSeriesDetailsView(with seriesID: Int)
 }
 
-class TVSeriesViewCoordinator: Coordinator, TVSeriesViewCoordinatorDelegate {
+class TVSeriesCoordinator: Coordinator, TVSeriesCoordinatorDelegate {
     
     //MARK: - Properties
     private var navController: UINavigationController
@@ -34,14 +34,18 @@ class TVSeriesViewCoordinator: Coordinator, TVSeriesViewCoordinatorDelegate {
                                                  currentPage: Constants.firstPage,
                                                  list: .topRated)
         identifier = Constants.tvSeriesViewCoordinatorID
-        navController.navigationBar.prefersLargeTitles = false
         navController.pushViewController(tvSeriesVC, animated: true)
     }
 
     //MARK: - TVSeriesViewCoordinatorDelegate
     func loadSeriesDetailsView(with seriesID: Int) {
-        let seriesCoordinator = TVSeriesDetailsCoordinator(navController: navController, seriesID: seriesID)
-        parentCoordinator?.addChildCoordinator(seriesCoordinator)
-        seriesCoordinator.start()
+        guard let movieDetailsVC = TvSeriesDetailsViewController.initFromStoryBoard() else { return }
+        
+        movieDetailsVC.viewModel = TvSeriesDetailsViewModel(mediaID: seriesID,
+                                                            tvSeriesCoordinatorDelegate: self,
+                                                            apiService: MovieDBService(),
+                                                            with: .tvSeries)
+        navController.pushViewController(movieDetailsVC, animated: true)
     }
+
 }

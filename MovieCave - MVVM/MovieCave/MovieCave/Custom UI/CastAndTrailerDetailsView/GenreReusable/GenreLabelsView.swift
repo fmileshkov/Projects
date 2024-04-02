@@ -17,47 +17,39 @@ protocol GenreLabelsViewProtocol: UIView {
 class GenreLabelsView: UIView, GenreLabelsViewProtocol {
     
     //MARK: - Properties
-    private var genreLabels: [GenreView] = []
+    private var genreLabels: [GenreViewProtocol] = []
     
     //MARK: - Public Methods
     func setUpGenreLabels(with genres: [String]) {
-        removeAllGenreLabels()
         
-        var xPosition: CGFloat = Constants.genreLabelXposition
-        var yPosition: CGFloat = Constants.genreLabelYposition
-        var row = Constants.genreLabelStartingRowPosition
-        var currentRowHighestElement: CGFloat = Constants.genreLabelStartingRowHighestElement
+        var xPosition: CGFloat = GenreViewConstants.genreLabelXposition
+        var yPosition: CGFloat = GenreViewConstants.genreLabelYposition
+        var row = GenreViewConstants.genreLabelStartingRowPosition
+        var currentRowHighestElement: CGFloat = GenreViewConstants.genreLabelStartingRowHighestElement
         
         genres.forEach { genre in
-            let genreLabel = GenreView(text: genre)
+            let genreLabel: GenreViewProtocol = GenreView()
+            genreLabel.configureView(text: genre)
             
             if genreLabel.frame.size.height > currentRowHighestElement {
                 currentRowHighestElement = genreLabel.frame.size.height
             }
             
             if genreLabel.frame.width >= frame.size.width - xPosition {
-                row += Constants.genreLabelRowPlus
-                yPosition += currentRowHighestElement + Constants.additionalYposicitonSpacing
-                xPosition = Constants.genreLabelXposition
-                currentRowHighestElement = Constants.genreLabelStartingRowHighestElement
+                row += GenreViewConstants.genreLabelRowPlus
+                yPosition += currentRowHighestElement + GenreViewConstants.additionalYposicitonSpacing
+                xPosition = GenreViewConstants.genreLabelXposition
+                currentRowHighestElement = GenreViewConstants.genreLabelStartingRowHighestElement
             }
             
-            genreLabel.frame.origin = CGPoint(x: xPosition, y: yPosition + Constants.genreLabelAdditionalFrameOriginY)
+            genreLabel.frame.origin = CGPoint(x: xPosition, y: yPosition + GenreViewConstants.genreLabelAdditionalFrameOriginY)
             
             addSubview(genreLabel)
             genreLabels.append(genreLabel)
             
-            xPosition += genreLabel.frame.size.width + Constants.additionalXpositionSizeWidth
+            xPosition += genreLabel.frame.size.width + GenreViewConstants.additionalXpositionSizeWidth
         }
     }
-    
-    //MARK: - Private
-    private func removeAllGenreLabels() {
-        for genreLabel in genreLabels {
-            genreLabel.removeFromSuperview()
-        }
 
-        genreLabels.removeAll()
-    }
 }
 

@@ -11,7 +11,7 @@ import UIKit
 protocol PersonalInfoViewCoordinatorDelegate: AnyObject {
     
     /// Delocates the current coordinator.
-    func dellocateCoordinator()
+    func deallocateCoordinator()
 }
 
 class PersonalInfoViewCoordinator: Coordinator, PersonalInfoViewCoordinatorDelegate {
@@ -34,8 +34,8 @@ class PersonalInfoViewCoordinator: Coordinator, PersonalInfoViewCoordinatorDeleg
     }
     
     //MARK: - PersonalInfoViewCoordinatorProtocol
-    func dellocateCoordinator() {
-        parentCoordinator?.removeChildCoordinator(self)
+    func deallocateCoordinator() {
+        removeChildCoordinator(self)
     }
     
 }

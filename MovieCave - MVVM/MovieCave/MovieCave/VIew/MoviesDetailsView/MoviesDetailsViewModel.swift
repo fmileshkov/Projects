@@ -40,12 +40,12 @@ class MoviesDetailsViewModel: MoviesDetailsProtocol {
     var mediaVideos: CurrentValueSubject<[MediaVideos]?, Never> = CurrentValueSubject(nil)
     var mediaCast: CurrentValueSubject<[MediaCast]?, Never> = CurrentValueSubject(nil)
     var popUpMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
-    weak var movieDetailsViewCoordinatorDelegate: MovieDetailsViewCoordinator?
+    weak var movieCoordinatorDelegate: MoviesCoordinatorDelegate?
     private var apiService: MovieDBServiceProtocol
     
     //MARK: - Initializer
-    init(mediaID: Int, movieDetailsViewCoordinatorDelegate: MovieDetailsViewCoordinator, apiService: MovieDBServiceProtocol, with type: MediaType) {
-        self.movieDetailsViewCoordinatorDelegate = movieDetailsViewCoordinatorDelegate
+    init(mediaID: Int, movieDetailsViewCoordinatorDelegate: MoviesCoordinatorDelegate, apiService: MovieDBServiceProtocol, with type: MediaType) {
+        self.movieCoordinatorDelegate = movieDetailsViewCoordinatorDelegate
         self.apiService = apiService
         movieDetails(mediaId: mediaID, with: type)
     }

@@ -7,6 +7,12 @@
 
 import UIKit
 
+struct CollectionViewReusableCellConstants {
+    static let reusableCellFavoriteButtonFrame: CGRect = CGRect(x:1, y:1, width:35,height:35)
+    static let collectionViewReusableCellLayerCornerRadius: CGFloat = 10
+    static let collectionViewReusableCellLayerBorderWidth: CGFloat = 2
+}
+
 protocol CollectionViewReusableCellProtocolForSeries {
     
     /// Configures the cell to display data for a TV show.
@@ -34,9 +40,9 @@ class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCe
     weak var delegate: FavoriteButtonDelegate?
     private var favoriteButton: UIButton!
     private let emptyStar = UIImage(systemName: Constants.starImage)?
-        .resizeSystemImage(sizeChange: CGSize(width: Constants.systemIconWidht, height: Constants.systemIconHeight), tintColor: .systemYellow)
+        .resizeSystemImage(sizeChange: CGSize(width: ReusableListViewConstants.systemIconWidht, height: ReusableListViewConstants.systemIconHeight), tintColor: .systemYellow)
     private let filledStar = UIImage(systemName: Constants.starFillImage)?
-        .resizeSystemImage(sizeChange: CGSize(width: Constants.systemIconWidht, height: Constants.systemIconHeight), tintColor: .systemYellow)
+        .resizeSystemImage(sizeChange: CGSize(width: ReusableListViewConstants.systemIconWidht, height: ReusableListViewConstants.systemIconHeight), tintColor: .systemYellow)
     private var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -46,12 +52,12 @@ class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCe
     var movieIindex: Int?
     
     func setTVSeries(with series: TVSeriesResults) {
-        imageView.downloaded(from: Constants.moviePosterURL + (series.posterPath ?? Constants.noImageString), contentMode: .scaleAspectFit)
+        imageView.downloaded(from: ReusableListViewConstants.moviePosterURL + (series.posterPath ?? Constants.noImageString), contentMode: .scaleAspectFit)
     }
     
     func setMovies(with movie: MovieModelResults) {
         favortieStarButtonChange(movie: movie)
-        imageView.downloaded(from: Constants.moviePosterURL + (movie.movieResults.posterPath ?? Constants.noImageString), contentMode: .scaleAspectFit)
+        imageView.downloaded(from: ReusableListViewConstants.moviePosterURL + (movie.movieResults.posterPath ?? Constants.noImageString), contentMode: .scaleAspectFit)
     }
     
     func setUpFavoriteButtonDelegate(for delegate: FavoriteButtonDelegate) {
@@ -61,13 +67,13 @@ class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCe
     //MARK: - Initiaizers
     override init(frame: CGRect) {
         super.init(frame: frame)
-        layer.borderWidth = Constants.collectionViewReusableCellLayerBorderWidth
-        layer.cornerRadius = Constants.collectionViewReusableCellLayerCornerRadius
+        layer.borderWidth = CollectionViewReusableCellConstants.collectionViewReusableCellLayerBorderWidth
+        layer.cornerRadius = CollectionViewReusableCellConstants.collectionViewReusableCellLayerCornerRadius
         clipsToBounds = true
         contentView.addSubview(imageView)
         contentView.clipsToBounds = true
         
-        favoriteButton = UIButton(frame: Constants.reusableCellFavoriteButtonFrame)
+        favoriteButton = UIButton(frame: CollectionViewReusableCellConstants.reusableCellFavoriteButtonFrame)
         favoriteButton.addTarget(self, action: #selector(self.favoriteButtonTapped), for: .touchUpInside)
         self.addSubview(favoriteButton)
     }

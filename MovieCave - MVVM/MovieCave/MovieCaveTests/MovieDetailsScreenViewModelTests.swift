@@ -11,7 +11,7 @@ import XCTest
 final class MovieDetailsScreenViewModelTests: XCTestCase {
     
     var mockMovieDBService: MovieDBManagerMock!
-    var movieDetailsCoordinator: MovieDetailsViewCoordinator!
+    var movieCoordinator: MoviesCoordinator!
     var viewModel: MoviesDetailsViewModel!
     let navController = UINavigationController()
     
@@ -23,7 +23,7 @@ final class MovieDetailsScreenViewModelTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
         mockMovieDBService = nil
-        movieDetailsCoordinator = nil
+        movieCoordinator = nil
         viewModel = nil
     }
     
@@ -31,8 +31,8 @@ final class MovieDetailsScreenViewModelTests: XCTestCase {
     func test_DetailsView_withMovies_HappyCase() {
         // Given
         let id = 10
-        movieDetailsCoordinator = MovieDetailsViewCoordinator(navController: navController, movieID: id)
-        viewModel = MoviesDetailsViewModel(mediaID: id, movieDetailsViewCoordinatorDelegate: movieDetailsCoordinator, apiService: mockMovieDBService, with: .movies)
+        movieCoordinator = MoviesCoordinator(navController: navController, with: .allMovies)
+        viewModel = MoviesDetailsViewModel(mediaID: id, movieDetailsViewCoordinatorDelegate: movieCoordinator, apiService: mockMovieDBService, with: .movies)
         // When
         
         
@@ -41,7 +41,7 @@ final class MovieDetailsScreenViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.mediaVideos.value?.last, mockMovieDBService.mediaVideos)
         XCTAssertEqual(viewModel.mediaCast.value?.last, mockMovieDBService.mediaCast)
         XCTAssertNil(mockMovieDBService.apiCallError)
-        XCTAssertNotNil(mockMovieDBService.apiCallMoviesResult?.movieResults)
+        XCTAssertNotNil(mockMovieDBService.apiCallMoviesResult?.modelResults)
         XCTAssertNotNil(viewModel.mediaCast.value)
         XCTAssertNotNil(viewModel.mediaVideos.value)
         XCTAssertNotNil(viewModel.mediaDetails.value)
@@ -50,9 +50,9 @@ final class MovieDetailsScreenViewModelTests: XCTestCase {
     func test_DetailsView_withMovies_SadCase() {
         // Given
         let id = 10
-        movieDetailsCoordinator = MovieDetailsViewCoordinator(navController: navController, movieID: id)
+        movieCoordinator = MoviesCoordinator(navController: navController, with: .allMovies)
         mockMovieDBService.succesCase = .sad
-        viewModel = MoviesDetailsViewModel(mediaID: id, movieDetailsViewCoordinatorDelegate: movieDetailsCoordinator, apiService: mockMovieDBService, with: .movies)
+        viewModel = MoviesDetailsViewModel(mediaID: id, movieDetailsViewCoordinatorDelegate: movieCoordinator, apiService: mockMovieDBService, with: .movies)
         
         // When
         
@@ -61,7 +61,7 @@ final class MovieDetailsScreenViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)
         XCTAssertNotNil(viewModel.popUpMessage)
         XCTAssertNotNil(mockMovieDBService.apiCallError)
-        XCTAssertNil(mockMovieDBService.apiCallMoviesResult?.movieResults)
+        XCTAssertNil(mockMovieDBService.apiCallMoviesResult?.modelResults)
         XCTAssertNil(viewModel.mediaCast.value)
         XCTAssertNil(viewModel.mediaVideos.value)
         XCTAssertNil(viewModel.mediaDetails.value)

@@ -7,20 +7,28 @@
 
 import UIKit
 
+struct RoundedButtonConstants {
+    static let roundedButtonCornerRadiusDevider: CGFloat = 2
+    static let roundedButtonBackgroundColor: UIColor = UIColor(red: 0.8, green: 0.9, blue: 1.0, alpha: 1.0)
+    static let roundedButtonLayerShadowOffset: CGSize = CGSize(width: 0, height: 2)
+    static let roundedButtonLayerShadowRadius: CGFloat = 4
+    static let roundedButtonLayerShadowOpacity: Float = 0.5
+}
+
 class RoundedButton: UIButton {
     
     //MARK: - Lifecycle Methods
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        layer.cornerRadius = bounds.height / Constants.roundedButtonCornerRadiusDevider
+        layer.cornerRadius = bounds.height / RoundedButtonConstants.roundedButtonCornerRadiusDevider
         
-        backgroundColor = Constants.roundedButtonBackgroundColor
+        backgroundColor = RoundedButtonConstants.roundedButtonBackgroundColor
         
         layer.shadowColor = UIColor.darkGray.cgColor
-        layer.shadowOffset = Constants.roundedButtonLayerShadowOffset
-        layer.shadowRadius = Constants.roundedButtonLayerShadowRadius
-        layer.shadowOpacity = Constants.roundedButtonLayerShadowOpacity
+        layer.shadowOffset = RoundedButtonConstants.roundedButtonLayerShadowOffset
+        layer.shadowRadius = RoundedButtonConstants.roundedButtonLayerShadowRadius
+        layer.shadowOpacity = RoundedButtonConstants.roundedButtonLayerShadowOpacity
         
         addTarget(self, action: #selector(buttonPressed), for: .touchDown)
         addTarget(self, action: #selector(buttonReleased), for: .touchUpInside)
@@ -34,7 +42,7 @@ class RoundedButton: UIButton {
     }
     
     @objc private func buttonReleased() {
-        backgroundColor = Constants.roundedButtonBackgroundColor
+        backgroundColor = RoundedButtonConstants.roundedButtonBackgroundColor
     }
 }
 

@@ -22,13 +22,18 @@ class TVSeriesViewController: UIViewController, SpinnerProtocol {
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.navigationBar.prefersLargeTitles = false
         tvSeriesView.filterButtons(buttonTitles: [Constants.popularTVSeriesFilterButton,
                                                   Constants.airingTodayTVSeriesFilterButton,
                                                   Constants.onTheAirTVSeriesFilterButton,
                                                   Constants.topRatedTVSeriesFilterButton])
         setUpBinders()
         setUpDelegates()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     //MARK: - Private Methods
@@ -91,6 +96,7 @@ extension TVSeriesViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let searchBarText = searchBar.text else { return }
 
+        self.showSpinner()
         viewModel?.performSearch(with: searchBarText)
     }
     
@@ -100,6 +106,7 @@ extension TVSeriesViewController: UISearchBarDelegate {
 extension TVSeriesViewController: SearchBarTextFieldTextPublisherDelegate {
 
     func searchBarTextPublished(text: String) {
+        self.showSpinner()
         viewModel?.performSearch(with: text)
     }
     

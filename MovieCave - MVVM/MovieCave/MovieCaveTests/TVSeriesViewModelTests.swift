@@ -50,25 +50,25 @@ final class TVSeriesViewModelTests: XCTestCase {
         // Given
         let id = 12
         coordinator.successType = .sad
-        
+
         // When
         viewModel.sendSeriesDetails(with: id)
-        
+
         // Then
         XCTAssertNil(mockMovieDBService.apiCallTVSeriesResult?.results)
         XCTAssertNotNil(mockMovieDBService.apiCallError)
         XCTAssertNotEqual(10, coordinator.mediaID)
         XCTAssertNil(coordinator.mediaID)
     }
-    
+
     func test_performSearch_HappyCase() {
         // Given
         mockMovieDBService.succesCase = .happy
         let searchText = "Happy case"
-        
+
         // When
         viewModel.performSearch(with: searchText)
-        
+
         // Then
         XCTAssertEqual(viewModel.dataSource.items.last?.name, mockMovieDBService.apiCallTVSeriesResult?.results.last?.name)
         XCTAssertNotNil(mockMovieDBService.apiCallTVSeriesResult?.results)
@@ -76,21 +76,21 @@ final class TVSeriesViewModelTests: XCTestCase {
         XCTAssertEqual(searchText, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
     }
-    
+
     func test_performSearch_SadCase() {
         // Given
         let searchText = ""
-        
+
         // When
         viewModel.performSearch(with: searchText)
-        
+
         // Then
         XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)
         XCTAssertNotNil(mockMovieDBService.apiCallError)
         XCTAssertEqual(searchText, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
     }
-    
+
     func test_filterSeries_HappyCase() {
         // Given
         mockMovieDBService = MovieDBManagerMock(succesCase: .happy, moviesList: .allMovies)
@@ -99,10 +99,10 @@ final class TVSeriesViewModelTests: XCTestCase {
                       Constants.airingTodayTVSeriesFilterButton,
                       Constants.onTheAirTVSeriesFilterButton,
                       Constants.topRatedTVSeriesFilterButton]
-        
+
         // When
         filter.forEach {viewModel.filterSeries($0)}
-        
+
         // Then
         XCTAssertEqual(filter.last, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
@@ -113,10 +113,10 @@ final class TVSeriesViewModelTests: XCTestCase {
     func test_filterSeries_SadCase() {
         // Given
         let filter = "Sad case"
-        
+
         // When
         viewModel.filterSeries(filter)
-        
+
         // Then
         XCTAssertNotEqual(filter, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
@@ -124,5 +124,5 @@ final class TVSeriesViewModelTests: XCTestCase {
         XCTAssertNotNil(mockMovieDBService.apiCallError)
         XCTAssertNotNil(viewModel.popUpMessage.value)
     }
-    
+
 }

@@ -12,7 +12,7 @@ enum CoordinatorSuccessType {
     case happy
     case sad
 }
-class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordinatorDelegate, LoginCoordinatorDelegate, PersonalInfoViewCoordinatorDelegate, TVSeriesViewCoordinatorDelegate, MoviesViewCoordinatorDelegate {
+class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordinatorDelegate, LoginCoordinatorDelegate, PersonalInfoViewCoordinatorDelegate, TVSeriesCoordinatorDelegate, MoviesCoordinatorDelegate {
 
     let navController = UINavigationController()
     var successType: CoordinatorSuccessType
@@ -24,10 +24,10 @@ class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordi
     }
     
     //MARK: - MoviesViewCoordinatorDelegate
-    func loadMoviesDetailsView(with movieID: Int) {
+    func loadMovieDetailsView(with movieID: Int) {
         switch successType {
         case .happy:
-            let moviesDetailCoord = MovieDetailsViewCoordinator(navController: navController, movieID: movieID)
+            let moviesDetailCoord = MoviesCoordinator(navController: navController, with: .allMovies)
             parentCoordinator?.addChildCoordinator(moviesDetailCoord)
             identifier = "MovieDetails coordinator"
             mediaID = movieID
@@ -43,7 +43,7 @@ class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordi
     func loadSeriesDetailsView(with seriesID: Int) {
         switch successType {
         case .happy:
-            let tvSeriesDetailsCoord = TVSeriesDetailsCoordinator(navController: navController, seriesID: seriesID)
+            let tvSeriesDetailsCoord = TVSeriesCoordinator(navController: navController)
             parentCoordinator?.addChildCoordinator(tvSeriesDetailsCoord)
             identifier = "TVSeriesDetails coordinator"
             mediaID = seriesID
@@ -56,7 +56,7 @@ class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordi
     }
     
     //MARK: - PersonalInfoViewCoordinatorProtocol
-    func dellocateCoordinator() {
+    func deallocateCoordinator() {
         switch successType {
         case .happy:
             childCoordinators = []
@@ -95,7 +95,7 @@ class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordi
     func loadFavoriteMoviesView() {
         switch successType {
         case .happy:
-            let favoriteMoviesCoordinator = MoviesViewCoordinator(navController: navController, with: .favorites)
+            let favoriteMoviesCoordinator = MoviesCoordinator(navController: navController, with: .favorites)
             parentCoordinator?.addChildCoordinator(favoriteMoviesCoordinator)
         case .sad:
             break

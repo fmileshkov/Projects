@@ -21,6 +21,17 @@ struct MovieResults: Codable {
     var posterPath: String?
 }
 
+struct MoviesModel {
+    var page: Int
+    var totalPages: Int
+    var modelResults: [MovieModelResults]
+}
+
+struct MovieModelResults {
+    var movieResults: MovieResults
+    var isFavorite: Bool
+}
+
 struct MovieDetailsData: Codable {
     var genres: [Genres]
     var id: Int
@@ -50,17 +61,6 @@ struct MovieDetailsData: Codable {
         case overview
         case runtime
     }
-}
-
-struct MoviesModel {
-    var page: Int
-    var totalPages: Int
-    var modelResults: [MovieModelResults]
-}
-
-struct MovieModelResults {
-    var movieResults: MovieResults
-    var isFavorite: Bool
 }
 
 enum MoviesList {
