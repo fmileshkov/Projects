@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ReusableListView" customModule="MovieCave" customModuleProvider="target">
+            <connections>
+                <outlet property="collectionView" destination="rn8-gG-raI" id="9GM-bu-kRl"/>
+                <outlet property="filterBarView" destination="6Zy-bf-DSY" id="HNi-GX-xac"/>
+                <outlet property="searchBar" destination="3Ra-uw-rdn" id="VaU-gU-6XK"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Zy-bf-DSY" userLabel="FilterBarView">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="100"/>
+                    <subviews>
+                        <searchBar contentMode="redraw" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Ra-uw-rdn">
+                            <rect key="frame" x="0.0" y="8" width="393" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </searchBar>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="100" id="hFN-OR-3ev"/>
+                    </constraints>
+                </view>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="rn8-gG-raI">
+                    <rect key="frame" x="0.0" y="108" width="393" height="744"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="CQf-qQ-sYR">
+                        <size key="itemSize" width="128" height="128"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                    <cells/>
+                </collectionView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="rn8-gG-raI" secondAttribute="bottom" id="CPW-U6-hQX"/>
+                <constraint firstItem="rn8-gG-raI" firstAttribute="top" secondItem="6Zy-bf-DSY" secondAttribute="bottom" constant="8" id="Mh3-jN-pcS"/>
+                <constraint firstItem="6Zy-bf-DSY" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="cKM-oY-mQY"/>
+                <constraint firstItem="6Zy-bf-DSY" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="g4j-k4-cRb"/>
+                <constraint firstItem="rn8-gG-raI" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="qPi-f0-670"/>
+                <constraint firstItem="rn8-gG-raI" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="qRS-DL-Gmg"/>
+                <constraint firstItem="6Zy-bf-DSY" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="t1m-sS-b8H"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-66.412213740458014" y="-11.267605633802818"/>
+        </view>
+    </objects>
+</document>
